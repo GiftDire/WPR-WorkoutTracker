@@ -4,7 +4,9 @@
     <title>FitPal - Log Your Workout</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="/src/scripts/workout-logger.js">
     <link rel="stylesheet" href="../styles/styles.css" />
+    
     <script type="module">
       import { createNavbar } from '../scripts/navbar.js';
       document.body.prepend(createNavbar('logging'));
@@ -51,14 +53,49 @@
             </div>
             
             <button type="submit" class="submit-btn">Log Workout</button>
+            
+          
+
           </form>
         </section>
 
         <section class="workout-list-section">
           <h2>Recent Workouts</h2>
           <div id="workoutList" class="workout-list"></div>
-        </section>
+           <div id="celebration-container"></div>
+          <div id="workoutList" class="workout-list"></div>
+          <button onclick="showMotivationalQuote()" class="motivation-btn">Workout Reminder</button>
+     
+          <p id="quote"></p>
+          <button onclick="printWorkout()"class="print-btn">Workout Summary</button>
+       </section>
       </div>
     </main>
   </body>
+
+
+<script>
+const quotes = [
+    "Push yourself, because no one else is going to do it for you.",
+    "Don’t limit your challenges. Challenge your limits!",
+    "The only bad workout is the one that didn’t happen.",
+    "Strive for progress, not perfection.",
+    "Your body achieves what your mind believes."
+];
+
+function showMotivationalQuote() {
+    let randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById("quote").innerText = randomQuote;
+}
+function printWorkout() {
+    let content = document.getElementById("workoutList").innerHTML;
+    let printWindow = window.open("", "_blank");
+    printWindow.document.write("<html><head><title>Workout Summary</title></head><body>");
+    printWindow.document.write(content);
+    printWindow.document.write("</body></html>");
+    printWindow.document.close();
+    printWindow.print();
+}
+</script>
+
 </html>

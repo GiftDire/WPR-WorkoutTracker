@@ -335,3 +335,93 @@ function showNotification(message) {
     setTimeout(() => notification.remove(), 500);
   }, 3000);
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const workoutForm = document.getElementById("workoutForm");
+  const workoutList = document.getElementById("workoutList");
+
+  // Load saved workouts from localStorage
+  loadWorkouts();
+
+  // Handle form submission
+  workoutForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      logWorkout();
+  });
+
+  function logWorkout() {
+      const workoutType = document.getElementById("workoutType").value;
+      const duration = document.getElementById("duration").value;
+      const calories = document.getElementById("calories").value;
+      const date = document.getElementById("date").value;
+
+      const workout = {
+          id: Date.now(),
+          type: workoutType,
+          duration,
+          calories,
+          date,
+          favorite: false
+      };
+
+      let workouts = JSON.parse(localStorage.getItem("workouts")) || [];
+      workouts.push(workout);
+      localStorage.setItem("workouts", JSON.stringify(workouts));
+
+      renderWorkout(workout);
+      workoutForm.reset();
+  }
+
+  function renderWorkout(workout) {
+      const workoutItem = document.createElement("div");
+      workoutItem.classList.add("workout");
+      workoutItem.dataset.id = workout.id;
+      workoutItem.innerHTML = `
+          <p><strong>Type:</strong> ${workout.type}</p>
+          <p><strong>Duration:</strong> ${workout.duration} mins</p>
+          <p><strong>Calories:</strong> ${workout.calories}</p>
+          <p><strong>Date:</strong> ${workout.date}</p>
+          <button class="favorite-btn ${workout.favorite ? "favorited" : ""}" onclick="toggleFavorite(${workout.id})">❤️</button>
+      `;
+      workoutList.appendChild(workoutItem);
+  }
+
+  function loadWorkouts() {
+      let workouts = JSON.parse(localStorage.getItem("workouts")) || [];
+      workoutList.innerHTML = "";
+      workouts.forEach(renderWorkout);
+  }
+
+  window.toggleFavorite = (id) => {
+      let workouts = JSON.parse(localStorage.getItem("workouts")) || [];
+      let updatedWorkouts = workouts.map(workout => {
+          if (workout.id === id) {
+              workout.favorite = !workout.favorite;
+              if (workout.favorite) {
+                  triggerCelebration();
+              }
+          }
+          return workout;
+      });
+
+      localStorage.setItem("workouts", JSON.stringify(updatedWorkouts));
+      loadWorkouts();
+  };
+});
+
+// 🎉 Celebration Effect
+function triggerCelebration() {
+  const celebrationContainer = document.getElementById("celebration-container");
+  
+  for (let i = 0; i < 20; i++) {
+      let confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.animationDuration = Math.random() * 2 + 1 + "s";
+      
+      celebrationContainer.appendChild(confetti);
+
+      setTimeout(() => {
+          confetti.remove();
+      }, 2000);
+  }
+}
